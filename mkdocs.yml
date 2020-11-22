@@ -1,4 +1,4 @@
-site_name: My Docs
+site_name: Docker guide
 nav:
   - Home: index.md
   - Docker: docker.md

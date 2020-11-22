@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  
+  <link rel="shortcut icon" href="../img/favicon.ico">
+  <title>Creating your own image - My Docs</title>
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "Creating your own image";
+    var mkdocs_page_input_path = "your-own-image.md";
+    var mkdocs_page_url = null;
+  </script>
+  
+  <script src="../js/jquery-2.1.1.min.js" defer></script>
+  <script src="../js/modernizr-2.8.3.min.js" defer></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script> 
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href=".." class="icon icon-home"> My Docs</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+	<ul class="current">
+	  
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="..">Home</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../docker/">Docker</a>
+	    </li>
+          
+            <li class="toctree-l1">
+		
+    <a class="" href="../docker-compose/">Docker Compose</a>
+	    </li>
+          
+            <li class="toctree-l1 current">
+		
+    <a class="current" href="./">Creating your own image</a>
+    <ul class="subnav">
+            
+    <li class="toctree-l2"><a href="#creating-your-own-image">Creating your own image</a></li>
+    
+        <ul>
+        
+            <li><a class="toctree-l3" href="#commit">Commit</a></li>
+        
+        </ul>
+    
+
+    <li class="toctree-l2"><a href="#dockerfile">Dockerfile</a></li>
+    
+
+    <li class="toctree-l2"><a href="#references">References</a></li>
+    
+
+    </ul>
+	    </li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="..">My Docs</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="..">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Creating your own image</li>
+    <li class="wy-breadcrumbs-aside">
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <h2 id="creating-your-own-image">Creating your own image</h2>
+<p>There are two ways of creating an image: Commit and Dockerfile.</p>
+<h3 id="commit">Commit</h3>
+<p>Create a container with:</p>
+<pre><code class="bash">$ sudo docker container run -it --name &lt;container_name&gt; &lt;image_name&gt; /bin/bash
+</code></pre>
+
+<p>You created and entered the container terminal. Install all you need and then type <code>exit</code>.</p>
+<p>Stop the container:</p>
+<pre><code class="bash">$ sudo docker container stop &lt;container_name&gt;
+</code></pre>
+
+<p>It stopped the container, now we can create a custom image of this container:</p>
+<pre><code class="bash">$ sudo docker container commit &lt;container_name&gt; &lt;new_image_name&gt;
+</code></pre>
+
+<p>Finished, type <code>sudo docker images</code> to see your new image!</p>
+<h2 id="dockerfile">Dockerfile</h2>
+<p>Dockerfile has the advantage to be an archive, so you can save this file somewhere and just build it to have your custom image. In commit mode you should install everything manually.</p>
+<p>To create an image with Dockerfile, create a empty folder and inside it create a file named Dockerfile. Inside this file you can configure the image how you want.</p>
+<p>As example, i will deploy this little project with nginx:</p>
+<pre><code class="html">&lt;html&gt;
+&lt;body&gt;
+    &lt;h1&gt;My Docker website with dockerfile&lt;/h1&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p>My dockerfile looks like this:</p>
+<pre><code class="dockerfile">FROM nginx
+LABEL version=&quot;1.0.0&quot; description=&quot;Nginx website example&quot; maintainer=&quot;Leonardo Zanotti &lt;leonardojosezanotti@gmail.com&gt;&quot;
+RUN cd / &amp;&amp; mkdir Files &amp;&amp; chmod 777 -R Files/
+COPY ./index.html /usr/share/nginx/html/
+ADD http://geolite.maxmind.com/download/geoip/database/GeoLite2-Country.tar.gz /temp/
+VOLUME /Files/
+EXPOSE 80
+ENV API_URL=http://localhost:8000/api/
+ENV API_DB=my_site
+WORKDIR /usr/share/nginx/html/
+ENTRYPOINT [&quot;/usr/sbin/nginx&quot;]
+CMD [&quot;-g&quot;, &quot;daemon off;&quot;]
+</code></pre>
+
+<p>The uppercase text are the docker commands (it doesnt need to be uppercase, its just for organization).
+The docker commands used are:</p>
+<ul>
+<li><code>FROM</code>: It tells which image we are modifing, because a dockerfile is a modification of an existing image. Its common to use a whole linux distribuition in this field like <code>debian:jessie</code>.</li>
+<li><code>LABEL</code>: Some informations about the image.</li>
+<li><code>RUN</code>: Commands to be runned when the container starts. Here is just an example of creating folder, but you can install dependences here with <code>sudo apt install</code> (if you are using a image that runs on debin derivade linux).</li>
+<li><code>COPY</code>: It copies files/folders from our machine to container. So here im using the copy to replace the index.html in nginx folder by my project.</li>
+<li><code>ADD</code>: Add is like a copy with more features. The principal feature is extract tar local files or by URL. Im using it as example to extract a tar file by URL to the temp folder.</li>
+<li><code>VOLUME</code>: Create a point where we can both pass and receive files from container. So, the files storaged in /Files will be storaged in your machine too and we doesnt gonna lose any file.</li>
+<li><code>EXPOSE</code>: The port of the connection. Nginx use the 80 by default.</li>
+<li><code>ENV</code>: Enviroment variables.</li>
+<li><code>WORKDIR</code>: Folder of work. Is where we enter after running the container and all the RUN commands really are runned.</li>
+<li><code>ENTRYPOINT</code>: Defines a folder to execute the CMD command.</li>
+<li><code>CMD</code>: Command to be executed. So, in this example, we are running <code>/usr/sbin/nginx -g daemon off;</code> (basically starting nginx).</li>
+</ul>
+<p>Its interesting to see the Nginx dockerfile (which is our base image). It uses the ubuntu dockerfile as base image so if we want we can run apt commands in the RUN:</p>
+<pre><code class="dockerfile"># Nginx Dockerfile
+# https://github.com/dockerfile/nginx
+
+# Pull base image.
+FROM dockerfile/ubuntu
+
+# Install Nginx.
+RUN \
+  add-apt-repository -y ppa:nginx/stable &amp;&amp; \
+  apt-get update &amp;&amp; \
+  apt-get install -y nginx &amp;&amp; \
+  rm -rf /var/lib/apt/lists/* &amp;&amp; \
+  echo &quot;\ndaemon off;&quot; &gt;&gt; /etc/nginx/nginx.conf &amp;&amp; \
+  chown -R www-data:www-data /var/lib/nginx
+
+# Define mountable directories.
+VOLUME [&quot;/etc/nginx/sites-enabled&quot;, &quot;/etc/nginx/certs&quot;, &quot;/etc/nginx/conf.d&quot;, &quot;/var/log/nginx&quot;, &quot;/var/www/html&quot;]
+
+# Define working directory.
+WORKDIR /etc/nginx
+
+# Define default command.
+CMD [&quot;nginx&quot;]
+
+# Expose ports.
+EXPOSE 80
+EXPOSE 443
+</code></pre>
+
+<p>So, inside the folder you created (when your image is finished), you can build your image: </p>
+<pre><code class="bash">$ sudo docker image build -t &lt;image_name&gt; .
+# sudo docker image build -t leonardozanotti/test-image .
+</code></pre>
+
+<p>Now, if you type <code>sudo docker images</code> you image will be there.</p>
+<p>Then, we can run the image with:</p>
+<pre><code class="bash"># How our Dockerfile is fully configured, we dont need to pass the `-e` and the `-v` arguments in the docker run.
+$ sudo docker run -d -p 80:80 --name image_name -e API_URL=http://api.mysite.com/api/ -v $PWD/Files:/Files/ full_image_name
+# sudo docker run -d -p 80:80 --name test-image -e API_URL=http://api.mysite.com/api/ -v $PWD/Files:/Files/ leonardozanotti/test-image
+</code></pre>
+
+<p>At the end, just open <code>localhost:80</code> to see the project:</p>
+<p><img alt="My own image" src="../images/my-own-image.png" /></p>
+<h2 id="references">References</h2>
+<p><a href="https://blog.matheuscastiglioni.com.br/criando-minha-primeira-imagem-com-docker/">Criando minha primeira imagem com docker</a></p>
+<p><a href="https://tableless.com.br/iniciando-com-o-docker-criando-suas-proprias-imagens/">Iniciando com docker e imagens</a></p>
+<p><a href="https://caiodelgado.dev/entendendo-dockerfile/">Entendendo dockerfile</a></p>
+              
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="../docker-compose/" class="btn btn-neutral" title="Docker Compose"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+      
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+      
+        <span><a href="../docker-compose/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      
+      
+    </span>
+</div>
+    <script>var base_url = '..';</script>
+    <script src="../js/theme.js" defer></script>
+      <script src="../search/main.js" defer></script>
+
+</body>
+</html>
