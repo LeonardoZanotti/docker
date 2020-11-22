@@ -1,0 +1,7 @@
+site_name: My Docs
+nav:
+  - Home: index.md
+  - Docker: docker.md
+  - Docker Compose: docker-compose.md
+  - Creating your own image: your-own-image.md
+theme: readthedocs
