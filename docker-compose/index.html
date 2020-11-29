@@ -73,7 +73,9 @@
         
             <li><a class="toctree-l3" href="#some-more-docker-compose-commands">Some more docker-compose commands</a></li>
         
-            <li><a class="toctree-l3" href="#using-docker-compose-to-create-a-laravel-ambient">Using docker-compose to create a laravel ambient</a></li>
+            <li><a class="toctree-l3" href="#using-docker-compose-to-create-a-laravel-environment">Using docker-compose to create a laravel environment</a></li>
+        
+            <li><a class="toctree-l3" href="#using-docker-compose-to-create-a-react-native-environment">Using docker-compose to create a React native environment</a></li>
         
             <li><a class="toctree-l3" href="#references">References</a></li>
         
@@ -259,8 +261,77 @@ $ sudo docker-compose unpause
   version            Show version information and quit
 </code></pre>
 
-<h2 id="using-docker-compose-to-create-a-laravel-ambient">Using docker-compose to create a laravel ambient</h2>
-<p>[Building...]</p>
+<h2 id="using-docker-compose-to-create-a-laravel-environment">Using docker-compose to create a laravel environment</h2>
+<p>Now, you know the basic of docker-compose and can create multiple containers by using it. A good example is a Laravel environment (you can find it in the files directory in this repository). The versions of the docker-compose iamges are a bit outdated, but for our example will work (of course you should build your docker-compose file with the latest versions of the images).</p>
+<p>To run the Laravel-environment you can do the following:</p>
+<p>Enter the docker-compose.yml folder and run:</p>
+<pre><code class="bash">$ sudo docker-compose up -d
+</code></pre>
+
+<p>It will take a while, because it is installing all dependences and creating the containers. After this, if you run <code>sudo docker ps</code> you can see all the 4 containers created.</p>
+<p>Now, we gonna clone a Laravel git project to our container, so we can run it in the container and not in our machine:</p>
+<pre><code class="bash">$ sudo docker exec -it php /bin/bash
+$ git clone &lt;git-project&gt;
+$ exit
+</code></pre>
+
+<p>Now, lets update the docker-compose.yml file with our project, so, every time we enter the container we will enter in the project folder. For it, stop the containers:</p>
+<pre><code class="bash">$ sudo docker-compose stop
+</code></pre>
+
+<p>Modify the docker-compose.yml, where you see ".:/application" change to "./[your-project-folder]:/application". Then, run the containers again (how we already created all, it will be faster):</p>
+<pre><code class="bash">$ sudo docker-compose up -d
+</code></pre>
+
+<p>Give the permissions to your project folder (in your terminal, not in the container terminal):</p>
+<pre><code class="bash">$ sudo chown &lt;your-username&gt;:&lt;your-username&gt; -R &lt;your-project-folder&gt;
+$ sudo chmod 755 -R &lt;your-project-folder&gt;
+</code></pre>
+
+<p>And its done! Every change in the project folder will modify the project folder in the container. Now, you can just develop your project. To stop all containers you can just stop it with:</p>
+<pre><code class="bash">$ sudo docker-compose stop
+</code></pre>
+
+<p>And then, you can run it again with:</p>
+<pre><code class="bash">$ sudo docker-compose up -d
+</code></pre>
+
+<h2 id="using-docker-compose-to-create-a-react-native-environment">Using docker-compose to create a React native environment</h2>
+<p>Now, lets use docker-compose to create a React native environment. For it, unzip the docker-compose file of the files folder in this repository and run it:</p>
+<pre><code class="bash">$ sudo docker-compose up -d
+</code></pre>
+
+<p>We are using a Ubuntu image to build the environment, installing <strong>Nodejs</strong> and all the packages of it. We are also installing the essentials to run andriod, like <strong>adb</strong>, <strong>openjdk</strong> and <strong>react-native</strong> (and some other things to make the container recognize the usb). </p>
+<p>Again, give the permissions to your project folder (in your terminal, not in the container terminal):</p>
+<pre><code class="bash">$ sudo docker exec -it react /bin/bash        # Run the terminal
+$ cd application/                             # Enter the application folder
+$ git clone &lt;git-project&gt;                     # Clone the project
+$ exit                                        # Exit
+
+# Give permissions
+$ sudo chown &lt;your-username&gt;:&lt;your-username&gt; -R &lt;your-project-folder&gt;
+$ sudo chmod 775 -R &lt;your-project-folder&gt;
+</code></pre>
+
+<h3 id="testing-the-application">Testing the application</h3>
+<p>With the permissions, lets finish the configuration accepting the sdk terms:</p>
+<pre><code class="bash">$ sudo docker exec -it react /bin/bash        # Run the terminal
+$ cd &lt;your-project-folder&gt;
+$ yes | ~/android/sdk/tools/bin/sdkmanager --sdk_root=${ANDROID_HOME} --licenses
+</code></pre>
+
+<p>Install and run your project:</p>
+<pre><code class="bash">$ yarn install
+$ yarn start
+</code></pre>
+
+<p>Now, we need to run the project in another terminal, so open a terminal in your machine and do:</p>
+<pre><code class="bash">$ sudo docker exec -it react /bin/bash  
+$ cd &lt;your-project-folder&gt;
+$ react-native run-android --variant=developmentDebug --appIdSuffix=development   # If this fails, run the command below
+$ react-native run-android
+</code></pre>
+
 <h2 id="references">References</h2>
 <p><a href="https://www.digitalocean.com/community/tutorials/how-to-install-docker-compose-on-ubuntu-18-04">Docker Compose on Ubuntu</a></p>
 <p><a href="https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-compose-on-ubuntu-20-04">Docker Compose install and use</a></p>
