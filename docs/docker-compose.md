@@ -160,9 +160,86 @@ Commands:
   version            Show version information and quit
 ```
 
-## Using docker-compose to create a laravel ambient
+## Using docker-compose to create a laravel environment
+Now, you know the basic of docker-compose and can create multiple containers by using it. A good example is a Laravel environment (you can find it in the files directory in this repository). The versions of the docker-compose iamges are a bit outdated, but for our example will work (of course you should build your docker-compose file with the latest versions of the images).
 
-[Building...]
+To run the Laravel-environment you can do the following:
+
+Enter the docker-compose.yml folder and run:
+```bash
+$ sudo docker-compose up -d
+```
+
+It will take a while, because it is installing all dependences and creating the containers. After this, if you run `sudo docker ps` you can see all the 4 containers created.
+
+Now, we gonna clone a Laravel git project to our container, so we can run it in the container and not in our machine:
+```bash
+$ sudo docker exec -it php /bin/bash
+$ git clone <git-project>
+$ exit
+```
+Now, lets update the docker-compose.yml file with our project, so, every time we enter the container we will enter in the project folder. For it, stop the containers:
+```bash
+$ sudo docker-compose stop
+```
+Modify the docker-compose.yml, where you see ".:/application" change to "./[your-project-folder]:/application". Then, run the containers again (how we already created all, it will be faster):
+```bash
+$ sudo docker-compose up -d
+```
+Give the permissions to your project folder (in your terminal, not in the container terminal):
+```bash
+$ sudo chown <your-username>:<your-username> -R <your-project-folder>
+$ sudo chmod 755 -R <your-project-folder>
+```
+And its done! Every change in the project folder will modify the project folder in the container. Now, you can just develop your project. To stop all containers you can just stop it with:
+```bash
+$ sudo docker-compose stop
+```
+And then, you can run it again with:
+```bash
+$ sudo docker-compose up -d
+```
+
+## Using docker-compose to create a React native environment
+Now, lets use docker-compose to create a React native environment. For it, unzip the docker-compose file of the files folder in this repository and run it:
+```bash
+$ sudo docker-compose up -d
+```
+We are using a Ubuntu image to build the environment, installing **Nodejs** and all the packages of it. We are also installing the essentials to run andriod, like **adb**, **openjdk** and **react-native** (and some other things to make the container recognize the usb). 
+
+Again, give the permissions to your project folder (in your terminal, not in the container terminal):
+```bash
+$ sudo docker exec -it react /bin/bash        # Run the terminal
+$ cd application/                             # Enter the application folder
+$ git clone <git-project>                     # Clone the project
+$ exit                                        # Exit
+
+# Give permissions
+$ sudo chown <your-username>:<your-username> -R <your-project-folder>
+$ sudo chmod 775 -R <your-project-folder>
+```
+
+### Testing the application
+With the permissions, lets finish the configuration accepting the sdk terms:
+```bash
+$ sudo docker exec -it react /bin/bash        # Run the terminal
+$ cd <your-project-folder>
+$ yes | ~/android/sdk/tools/bin/sdkmanager --sdk_root=${ANDROID_HOME} --licenses
+```
+
+Install and run your project:
+```bash
+$ yarn install
+$ yarn start
+```
+
+Now, we need to run the project in another terminal, so open a terminal in your machine and do:
+```bash
+$ sudo docker exec -it react /bin/bash  
+$ cd <your-project-folder>
+$ react-native run-android --variant=developmentDebug --appIdSuffix=development   # If this fails, run the command below
+$ react-native run-android
+```
 
 ## References
 [Docker Compose on Ubuntu](https://www.digitalocean.com/community/tutorials/how-to-install-docker-compose-on-ubuntu-18-04)
